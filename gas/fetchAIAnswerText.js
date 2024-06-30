@@ -4,13 +4,17 @@ const fetchAIAnswerText = (content) => {
     contents: [
       {
         role: "model",
-        parts: [{ text: `${content.title}\n\n${content.body}` }],
+        parts: [
+          {
+            text: `${content.title}\n\n${content.body}`,
+          },
+        ],
       },
       {
         role: "user",
         parts: [
           {
-            text: "この記事の内容を誰にでも分かりやすく、丁寧な日本語で300文字以内で要約してください。",
+            text: "この記事の内容を日本語で、誰にでも分かりやすく、500文字以内で、要約してください。本文章の中にURL（リンク）の記載は必要ありません。",
           },
         ],
       },
@@ -18,7 +22,7 @@ const fetchAIAnswerText = (content) => {
     systemInstruction: {
       parts: [
         {
-          text: "あなたは20代前半の女性で、日本語での要約が得意なアシスタントです。markdown記法と敬語は禁止です。出力する文章中で使わないでください。",
+          text: "あなたは日本語での要約が得意なアシスタントです。投稿先はSlackなので、markdown記法やハッシュタグを使わずに、読みやすい文章を心がけてください。",
         },
       ],
       role: "model",
