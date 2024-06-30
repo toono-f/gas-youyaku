@@ -8,20 +8,8 @@ const doPost = (e) => {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("list");
   const data = sheet.getDataRange().getValues();
 
-  let rowIndex = null;
-
   // 空いている行を探す
-  for (let i = 1; i < data.length; i++) {
-    if (!data[i][0]) {
-      rowIndex = i + 1;
-      break;
-    }
-  }
-
-  // 空いている行が見つからなかった場合、新しい行を追加
-  if (rowIndex === null) {
-    rowIndex = data.length + 1;
-  }
+  let rowIndex = data.findIndex((row) => !row[0]) + 1 || data.length + 1;
 
   const postData = JSON.parse(e.postData.getDataAsString());
   if (postData.type == "url_verification") {
@@ -29,9 +17,7 @@ const doPost = (e) => {
   }
 
   const payload = JSON.parse(e.postData.contents);
-  const text = payload.event.text;
-  const channel = payload.event.channel;
-  const msgId = payload.event.client_msg_id;
+  const { text, channel, client_msg_id: msgId } = payload.event;
 
   // テキストからメンション部分を削除
   const url = trimMentionText(text);
@@ -53,17 +39,10 @@ const doPost = (e) => {
     const youyakuContents = fetchAIAnswerText(content);
     postMessage(youyakuContents, channel, url, content.image);
 
-    // スプレッドシートの同A列にURLを書き込む
-    sheet.getRange(rowIndex, 1).setValue(url);
-
-    // スプレッドシートの同B列に記事タイトルを書き込む
-    sheet.getRange(rowIndex, 2).setValue(content.title);
-
-    // スプレッドシートの同C列にyouyakuContentsを書き込む
-    sheet.getRange(rowIndex, 3).setValue(youyakuContents);
-
-    // スプレッドシートの同D列に完了の文字列を書き込む
-    sheet.getRange(rowIndex, 4).setValue("完了");
+    // スプレッドシートにデータを書き込む
+    sheet
+      .getRange(rowIndex, 1, 1, 4)
+      .setValues([[url, content.title, youyakuContents, "完了"]]);
 
     return ContentService.createTextOutput("OK");
   } catch (e) {

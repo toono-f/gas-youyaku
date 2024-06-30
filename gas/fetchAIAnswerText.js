@@ -4,17 +4,12 @@ const fetchAIAnswerText = (content) => {
     contents: [
       {
         role: "model",
-        parts: [
-          {
-            text: `${content.title}\n\n${content.body}`,
-          },
-        ],
+        parts: [{ text: `${content.title}\n\n${content.body}` }],
       },
       {
         role: "user",
         parts: [
           {
-            // text: "この記事の内容を日本語で、300文字以内で、Twitterで注目を浴びるように、要約してください。本文章の中にURL（リンク）の記載は必要ありません。",
             text: "この記事の内容を誰にでも分かりやすく、丁寧な日本語で300文字以内で要約してください。",
           },
         ],
@@ -36,29 +31,19 @@ const fetchAIAnswerText = (content) => {
   };
 
   try {
-    // Gemini APIへPOSTリクエストを送信
     const response = UrlFetchApp.fetch(ENDPOINT, options);
-
-    // ステータスコードが200以外の場合はエラーメッセージを返す
-    const responseCode = response.getResponseCode();
-    if (responseCode !== 200) {
+    if (response.getResponseCode() !== 200) {
       throw new Error(
-        `Gemini APIリクエストに失敗しました: ${responseCode} ${response.getContentText()}`
+        `Gemini APIリクエストに失敗しました: ${response.getResponseCode()} ${response.getContentText()}`
       );
     }
 
-    // レスポンスからAIから返された回答を取得する
     const resPayloadObj = JSON.parse(response.getContentText());
+    const rawAnswerText =
+      resPayloadObj?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (
-      resPayloadObj &&
-      resPayloadObj.candidates &&
-      resPayloadObj.candidates.length > 0
-    ) {
-      // 取得した回答を整形して返す
-      const rawAnswerText = resPayloadObj.candidates[0].content.parts[0].text;
-      const trimedAnswerText = rawAnswerText.replace(/^\n+/, "");
-      return trimedAnswerText;
+    if (rawAnswerText) {
+      return rawAnswerText.trim();
     } else {
       throw new Error("AIからの応答が空でした");
     }
