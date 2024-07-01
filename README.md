@@ -11,10 +11,10 @@
 ## ファイル構成
 
 - `gas/common.js`: 共通関数
-- `gas/doPost.js`: SlackからのPOSTリクエストを処理
-- `gas/contentExtractFromSheet.js`: スプレッドシートからURLを取得して処理
-- `gas/fetchAIAnswerText.js`: AIを使用してコンテンツを要約
-- `gas/extractContent.js`: コンテンツ抽出ロジック（外部ライブラリ参考）
+- `gas/handleSlackPostRequest.js`: SlackからのPOSTリクエストを処理
+- `gas/processSlackPostRequest.js`: スプレッドシートからURLを取得して処理
+- `gas/fetchAIAnswerSummary.js`: AIを使用してコンテンツを要約
+- `gas/extractContent.js`: コンテンツ抽出ロジック
 
 ## Google Apps Scriptでの設定
 
