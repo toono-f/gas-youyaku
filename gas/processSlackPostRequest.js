@@ -1,8 +1,8 @@
 /**
- * processSlackPostRequest関数は、SlackアプリからのPOSTリクエストを処理します。
+ * fetchAndPostUnfinishedUrls関数は、スプレッドシートから未完了のURLを取得し、内容を要約してSlackに投稿します。
  * @returns {void}
  */
-const processSlackPostRequest = () => {
+const fetchAndPostUnfinishedUrls = () => {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("list");
   const data = sheet.getDataRange().getValues();
 
