@@ -1,13 +1,10 @@
-// デプロイURL登録先： https://api.slack.com/apps/A0671FCSE56/event-subscriptions?
-
 /**
- * doPost関数は、SlackアプリからのPOSTリクエストを処理します。
+ * handleSlackPostRequest関数は、SlackアプリからのPOSTリクエストを処理します。
  * @returns {void}
  */
-const doPost = (e) => {
+const handleSlackPostRequest = (e) => {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("list");
   const data = sheet.getDataRange().getValues();
-
   // 空いている行を探す
   let rowIndex = data.findIndex((row) => !row[0]) + 1 || data.length + 1;
 
@@ -17,36 +14,36 @@ const doPost = (e) => {
   }
 
   const payload = JSON.parse(e.postData.contents);
-  const { text, channel, client_msg_id: msgId } = payload.event;
+  const { text, channel: channelId, client_msg_id: msgId } = payload.event;
 
   // テキストからメンション部分を削除
-  const url = trimMentionText(text);
+  const url = removeMentionFromText(text);
 
   if (!url) {
-    postMessage(
+    postSlackMessage(
       `URLを読み取れませんでした🤔\nURLだけメンションしてね💫`,
-      channel,
+      channelId,
       url
     );
     return;
   }
 
   // 処理済みのメッセージの場合、OKを返して処理を終了する
-  if (isCachedId(msgId)) return ContentService.createTextOutput("OK");
+  if (isMessageIdCached(msgId)) return ContentService.createTextOutput("OK");
 
   try {
-    const content = extractContent(url);
-    const youyakuContents = fetchAIAnswerText(content);
-    postMessage(youyakuContents, channel, url, content.image);
+    const content = extractContentFromUrl(url);
+    const summary = fetchAIAnswerSummary(content);
+    postSlackMessage(summary, channelId, url, content.image);
 
     // スプレッドシートにデータを書き込む
     sheet
       .getRange(rowIndex, 1, 1, 4)
-      .setValues([[url, content.title, youyakuContents, "完了"]]);
+      .setValues([[url, content.title, summary, "完了"]]);
 
     return ContentService.createTextOutput("OK");
-  } catch (e) {
-    console.error(e.stack, "応答エラーが発生しました");
+  } catch (error) {
+    console.error(error.stack, "応答エラーが発生しました");
     return ContentService.createTextOutput("NG");
   }
 };

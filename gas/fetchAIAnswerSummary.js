@@ -1,4 +1,4 @@
-const fetchAIAnswerText = (content) => {
+const fetchAIAnswerSummary = (content) => {
   const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
   const payload = {
     contents: [

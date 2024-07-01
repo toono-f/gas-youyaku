@@ -1,8 +1,8 @@
 /**
- * contentExtractFromSheet関数は、SlackアプリからのPOSTリクエストを処理します。
+ * processSlackPostRequest関数は、SlackアプリからのPOSTリクエストを処理します。
  * @returns {void}
  */
-const contentExtractFromSheet = () => {
+const processSlackPostRequest = () => {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("list");
   const data = sheet.getDataRange().getValues();
 
@@ -17,21 +17,20 @@ const contentExtractFromSheet = () => {
       break;
     }
   }
-
   if (!url || !url.includes("http")) {
     console.log("未完了のURLはありません");
     return;
   }
 
-  const channel = sheet.getRange(rowIndex, 5).getValue() || SLACK_CHANNEL;
+  const channelId = sheet.getRange(rowIndex, 5).getValue() || SLACK_CHANNEL_ID;
 
   try {
-    const content = extractContent(url);
-    const youyakuContents = fetchAIAnswerText(content);
-    postMessage(youyakuContents, channel, url);
+    const content = extractContentFromUrl(url);
+    const summary = fetchAIAnswerSummary(content);
+    postSlackMessage(summary, channelId, url);
 
     sheet.getRange(rowIndex, 2).setValue(content.title);
-    sheet.getRange(rowIndex, 3).setValue(youyakuContents);
+    sheet.getRange(rowIndex, 3).setValue(summary);
     sheet.getRange(rowIndex, 4).setValue("完了");
 
     return ContentService.createTextOutput("OK");
