@@ -12,7 +12,7 @@
 
 - `gas/common.js`: 共通関数
 - `gas/handleSlackPostRequest.js`: SlackからのPOSTリクエストを処理
-- `gas/processSlackPostRequest.js`: スプレッドシートからURLを取得して処理
+- `gas/fetchAndPostUnfinishedUrls.js`: スプレッドシートからURLを取得して処理
 - `gas/fetchAIAnswerSummary.js`: AIを使用してコンテンツを要約
 - `gas/extractContent.js`: コンテンツ抽出ロジック
 
