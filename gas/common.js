@@ -3,7 +3,7 @@ const SLACK_BOT_AUTH_TOKEN = scriptProperties.getProperty(
   "SLACK_BOT_AUTH_TOKEN"
 );
 const API_KEY = scriptProperties.getProperty("API_KEY");
-const SLACK_CHANNEL_ID = scriptProperties.getProperty("SLACK_CHANNEL");
+const SLACK_CHANNEL_ID = scriptProperties.getProperty("SLACK_CHANNEL_ID");
 
 /**
  * Slackの指定したチャンネルにメッセージを投稿する
